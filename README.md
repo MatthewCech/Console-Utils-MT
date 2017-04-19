@@ -1,2 +1,1 @@
-# Console-Utils-MT
-Multithreading Ascii Extravaganza
+# Multithreaded Console Experience
