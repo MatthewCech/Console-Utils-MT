@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Canvases_MT", "Canvases_MT.vcxproj", "{D981F58C-4537-6E82-CE2B-68593AE06486}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Lib|Win32 = Lib|Win32
+		Lib|x64 = Lib|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D981F58C-4537-6E82-CE2B-68593AE06486}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D981F58C-4537-6E82-CE2B-68593AE06486}.Debug|Win32.Build.0 = Debug|Win32
+		{D981F58C-4537-6E82-CE2B-68593AE06486}.Debug|x64.ActiveCfg = Debug|x64
+		{D981F58C-4537-6E82-CE2B-68593AE06486}.Debug|x64.Build.0 = Debug|x64
+		{D981F58C-4537-6E82-CE2B-68593AE06486}.Lib|Win32.ActiveCfg = Lib|Win32
+		{D981F58C-4537-6E82-CE2B-68593AE06486}.Lib|Win32.Build.0 = Lib|Win32
+		{D981F58C-4537-6E82-CE2B-68593AE06486}.Lib|x64.ActiveCfg = Lib|x64
+		{D981F58C-4537-6E82-CE2B-68593AE06486}.Lib|x64.Build.0 = Lib|x64
+		{D981F58C-4537-6E82-CE2B-68593AE06486}.Release|Win32.ActiveCfg = Release|Win32
+		{D981F58C-4537-6E82-CE2B-68593AE06486}.Release|Win32.Build.0 = Release|Win32
+		{D981F58C-4537-6E82-CE2B-68593AE06486}.Release|x64.ActiveCfg = Release|x64
+		{D981F58C-4537-6E82-CE2B-68593AE06486}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
