@@ -60,7 +60,7 @@ namespace Coloring
     COLOR_YELLOW, COLOR_WHITE, COLOR_ENUM_GET_LENGTH
   };
 
-  const char* getColor(int color)
+  const char* GetColor(int color)
   {
     switch (color)
     {
@@ -98,16 +98,15 @@ void Clear()
 void Print(int x, int y, unsigned char buf, int colorCode = 9)
 {
 #ifdef _WIN32
-  COORD coord;
-  coord.X = (SHORT)x - 1;
-  coord.Y = (SHORT)y - 1; 
-  SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-  SetConsoleTextAttribute(hConsole, static_cast<WORD>(colorCode));
+  // In theory, there is a way to do this for windows using the printf in the #else.
+  COORD coord{ (SHORT)x - 1, (SHORT)y - 1 };                        // Pos                                        
+  SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord); // Pos
+  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);                // Color
+  SetConsoleTextAttribute(hConsole, static_cast<WORD>(colorCode));  // Color
   printf("%c", buf);
 #else
-  //printf("%s\033[%d;%dH%c\n", colorCode, x, y, buf);
-  printf("%s\033[%d;%dH%c\n", getColor(colorCode), x, y, buf);
+  // Pos and color
+  printf("%s\033[%d;%dH%c\n", Coloring::GetColor(colorCode), x, y, buf);
 #endif
 }
 
@@ -162,8 +161,10 @@ int main()
     // Timer End /////////////////////////////////////////////////
     auto finish = std::chrono::high_resolution_clock::now();   //
     ////////////////////////////////////////////////////////////
-    // Print trailing newline.
-    printf("\n");
+    #ifdef _WIN32 
+      // Print trailing newline to make windows happy and wrap properly.
+      printf("\n");
+    #endif
 
     // Accumulate values after. Not incluided in the time.
     times[index++] = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count() / 1000000.0;
@@ -179,7 +180,7 @@ int main()
     std::cout 
       << std::left  << "ms: " << std::left << std::setw(10) << sum / len
       << std::right << ", avg over " << std::setw(4) << std::left << len
-      << std::right << "samples." << '\n';
+      << std::right << "samples.";
   }
 
   // Return normal
