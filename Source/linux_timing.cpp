@@ -1,23 +1,32 @@
-// Win and Linux
+  //////////////////////
+ // General Includes //
+//////////////////////
+// String manupulation
 #include <string>
+#include <iomanip>  
 #include <sstream>
 #include <iostream>
 #include <cstdio>
-#include <vector>
-#include <iomanip>  
 
 // Timing
 #include <chrono>
-#include <iostream>
-#include <vector>
 #include <numeric>
-#include <string>
 #include <functional>
 
-// Linux specifically
-#include <sys/ioctl.h>
-#include <stdio.h>
-#include <unistd.h>
+
+  /////////////////
+ // OS Specific //
+/////////////////
+#ifdef _WIN32
+  // Windows
+  #include <windows.h>
+#else 
+  // *Nix specifically
+  #include <sys/ioctl.h>
+  #include <stdio.h>
+  #include <unistd.h>
+#endif
+
 
   ////////////
  // Colors //
@@ -51,27 +60,61 @@ void print(int x, int y, char buf, const char* colorCode = "")
   printf("%s\033[%d;%dH%c\n", colorCode, x, y, buf);
 }
 
-int main()
+void setSize(int &width, int &height)
 {
-  const double size = 200;
-  bool looped = false;
-  int index = 0;
-  double times[static_cast<int>(size)] = { 0 };
-
-  while(1)
-  {  
+  #ifdef _WIN32
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)
+    width = csbi.srWindow.Right - csbi.srWindow.Left; // off by 1?
+    height 
+  #else
     struct winsize screenSize;
     ioctl(STDOUT_FILENO,TIOCGWINSZ,&screenSize);
+    width = screenSize.ws_row;
+    height = screenSize.ws_col;
+  #endif
+}
 
-    // Timer Start ////////////////////////////////////////////////////////////
-    auto start = std::chrono::high_resolution_clock::now();
+int main()
+{
+  // Timing
+  const double size = 200;
+  double times[static_cast<int>(size)] = { 0 };
+  bool looped = false;
+  int index = 0;
 
-    for(int i = 0; i < screenSize.ws_row; ++i)
-      for(int j = 0; j < screenSize.ws_col; ++j)
+  // Sizing and Screen info
+  int width = 0;
+  int height = 0;
+
+  // Primary loop
+  while(true)
+  {  
+     //////////////////////////////////////////////////////////////
+    // Timer Start ///////////////////////////////////////////////
+    auto start = std::chrono::high_resolution_clock::now();    //
+    ////////////////////////////////////////////////////////////
+
+
+
+
+    // Set screen size
+    setSize(width, height);
+
+    // Draw the screen.
+    for(int i = 0; i < width; ++i)
+      for(int j = 0; j < height; ++j)
         print(i, j, 219, COLOR_LIGHTCYAN);
 
-    // Timer end, and accumulation after. Not included. ///////////////////////
-    auto finish = std::chrono::high_resolution_clock::now();
+
+
+
+     //////////////////////////////////////////////////////////////
+    // Timer End /////////////////////////////////////////////////
+    auto finish = std::chrono::high_resolution_clock::now();   //
+    ////////////////////////////////////////////////////////////
+
+    // Accumulate values after. Not incluided in the time.
     times[index++] = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count() / 1000000.0;
     if(index >= size)
       looped = true, index = 0;
@@ -86,5 +129,6 @@ int main()
     << std::right << "%" << '\n';
   }
 
+  // Return normal
   return 0;
 }
