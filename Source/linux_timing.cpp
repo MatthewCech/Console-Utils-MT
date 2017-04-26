@@ -86,16 +86,16 @@ namespace Coloring
   }
 }
 
-void clear()
+void Clear()
 {
-//#ifdef _WIN32
-//  system("cls");
-//#else 
+#ifdef _WIN32
+  system("cls");
+#else 
   printf("\033[2J\033[H");
-//#endif
+#endif
 }
 
-void print(int x, int y, unsigned char buf, int colorCode = 9)
+void Print(int x, int y, unsigned char buf, int colorCode = 9)
 {
 #ifdef _WIN32
   COORD coord;
@@ -111,7 +111,7 @@ void print(int x, int y, unsigned char buf, int colorCode = 9)
 #endif
 }
 
-void getSize(int &width, int &height)
+void GetScreenSize(int &width, int &height)
 {
   #ifdef _WIN32 // May be off by 1. 
     CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -149,12 +149,12 @@ int main()
 
 
     // Set screen size
-    getSize(width, height);
+    GetScreenSize(width, height);
 
     // Draw the screen. Height offset by 1 to print stats at the end.
     for(int i = 0; i < width; ++i)
       for(int j = 0; j < height - 1; ++j)
-        print(i, j, static_cast<unsigned char>(219), Coloring::COLOR_LIGHTCYAN);
+        Print(i, j, static_cast<unsigned char>(219), Coloring::COLOR_LIGHTCYAN);
 
 
 
@@ -171,13 +171,15 @@ int main()
       looped = true, index = 0;
 
     double sum = 0;
-    for(int i = 0; i < size; ++i)
+    double len = looped ? size : index + 1;
+    for (int i = 0; i < len; ++i)
       sum += times[i];
 
-    std::cout << "ms: " << std::left << std::setw(10) << sum / static_cast<double>(size) << std::right
-    << ", averaging at " << std::setw(4) << std::left 
-    << (looped ? 100 :  index / static_cast<double>(size) * 100) 
-    << std::right << "%" << '\n';
+    // Print timing info
+    std::cout 
+      << std::left  << "ms: " << std::left << std::setw(10) << sum / len
+      << std::right << ", avg over " << std::setw(4) << std::left << len
+      << std::right << "samples." << '\n';
   }
 
   // Return normal
