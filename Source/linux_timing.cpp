@@ -31,42 +31,93 @@
   ////////////
  // Colors //
 ////////////
-const char* COLOR_CLS = "\033[2J";
-const char* COLOR_BLACK = "\033[22;30m";
-const char* COLOR_RED = "\033[22;31m";
-const char* COLOR_GREEN = "\033[22;32m";
-const char* COLOR_BROWN = "\033[22;33m";
-const char* COLOR_BLUE = "\033[22;34m";
-const char* COLOR_MAGENTA = "\033[22;35m";
-const char* COLOR_CYAN = "\033[22;36m";
-const char* COLOR_GREY = "\033[22;37m";
-const char* COLOR_DARKGREY = "\033[01;30m";
-const char* COLOR_LIGHTRED = "\033[01;31m";
-const char* COLOR_LIGHTGREEN = "\033[01;32m";
-const char* COLOR_YELLOW = "\033[01;33m";
-const char* COLOR_LIGHTBLUE = "\033[01;34m";
-const char* COLOR_LIGHTMAGENTA = "\033[01;35m";
-const char* COLOR_LIGHTCYAN = "\033[01;36m";
-const char* COLOR_WHITE = "\033[01;37m";
 
+namespace Coloring
+{
+  const char* COLORCODE_BLACK = "\033[22;30m";
+  const char* COLORCODE_RED = "\033[22;31m";
+  const char* COLORCODE_GREEN = "\033[22;32m";
+  const char* COLORCODE_BROWN = "\033[22;33m";
+  const char* COLORCODE_BLUE = "\033[22;34m";
+  const char* COLORCODE_MAGENTA = "\033[22;35m";
+  const char* COLORCODE_CYAN = "\033[22;36m";
+  const char* COLORCODE_GREY = "\033[22;37m";
+  const char* COLORCODE_DARKGREY = "\033[01;30m";
+  const char* COLORCODE_LIGHTRED = "\033[01;31m";
+  const char* COLORCODE_LIGHTGREEN = "\033[01;32m";
+  const char* COLORCODE_YELLOW = "\033[01;33m";
+  const char* COLORCODE_LIGHTBLUE = "\033[01;34m";
+  const char* COLORCODE_LIGHTMAGENTA = "\033[01;35m";
+  const char* COLORCODE_LIGHTCYAN = "\033[01;36m";
+  const char* COLORCODE_WHITE = "\033[01;37m";
+
+  enum
+  {
+    COLOR_BLACK = 0, COLOR_BLUE, COLOR_GREEN, COLOR_CYAN,
+    COLOR_RED, COLOR_MAGENTA, COLOR_BROWN, COLOR_GREY,
+    COLOR_DARKGREY, COLOR_LIGHTBLUE, COLOR_LIGHTGREEN,
+    COLOR_LIGHTCYAN, COLOR_LIGHTRED, COLOR_LIGHTMAGENTA,
+    COLOR_YELLOW, COLOR_WHITE, COLOR_ENUM_GET_LENGTH
+  };
+
+  const char* getColor(int color)
+  {
+    switch (color)
+    {
+    case 0: return COLORCODE_BLACK;
+    case 1: return COLORCODE_BLUE;
+    case 2: return COLORCODE_GREEN;
+    case 3: return COLORCODE_CYAN;
+    case 4: return COLORCODE_RED;
+    case 5: return COLORCODE_MAGENTA;
+    case 6: return COLORCODE_BROWN;
+    case 7: return COLORCODE_GREY;
+    case 8: return COLORCODE_DARKGREY;
+    case 9: return COLORCODE_LIGHTBLUE;
+    case 10: return COLORCODE_LIGHTGREEN;
+    case 11: return COLORCODE_LIGHTCYAN;
+    case 12: return COLORCODE_LIGHTRED;
+    case 13: return COLORCODE_LIGHTMAGENTA;
+    case 14: return COLORCODE_YELLOW;
+    case 15: return COLORCODE_WHITE;
+    }
+
+    return "";
+  }
+}
 
 void clear()
 {
+//#ifdef _WIN32
+//  system("cls");
+//#else 
   printf("\033[2J\033[H");
+//#endif
 }
 
-void print(int x, int y, char buf, const char* colorCode = "")
+void print(int x, int y, unsigned char buf, int colorCode = 9)
 {
-  printf("%s\033[%d;%dH%c\n", colorCode, x, y, buf);
+#ifdef _WIN32
+  COORD coord;
+  coord.X = (SHORT)x - 1;
+  coord.Y = (SHORT)y - 1; 
+  SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+  SetConsoleTextAttribute(hConsole, static_cast<WORD>(colorCode));
+  printf("%c", buf);
+#else
+  //printf("%s\033[%d;%dH%c\n", colorCode, x, y, buf);
+  printf("%s\033[%d;%dH%c\n", getColor(colorCode), x, y, buf);
+#endif
 }
 
-void setSize(int &width, int &height)
+void getSize(int &width, int &height)
 {
-  #ifdef _WIN32
+  #ifdef _WIN32 // May be off by 1. 
     CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)
-    width = csbi.srWindow.Right - csbi.srWindow.Left; // off by 1?
-    height 
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi); // Returns -1 on failure.
+    width = csbi.srWindow.Right - csbi.srWindow.Left + 1; 
+    height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
   #else
     struct winsize screenSize;
     ioctl(STDOUT_FILENO,TIOCGWINSZ,&screenSize);
@@ -78,8 +129,8 @@ void setSize(int &width, int &height)
 int main()
 {
   // Timing
-  const double size = 200;
-  double times[static_cast<int>(size)] = { 0 };
+  const int size = 100;
+  double times[size] = { 0 };
   bool looped = false;
   int index = 0;
 
@@ -97,15 +148,13 @@ int main()
 
 
 
-
     // Set screen size
-    setSize(width, height);
+    getSize(width, height);
 
-    // Draw the screen.
+    // Draw the screen. Height offset by 1 to print stats at the end.
     for(int i = 0; i < width; ++i)
-      for(int j = 0; j < height; ++j)
-        print(i, j, 219, COLOR_LIGHTCYAN);
-
+      for(int j = 0; j < height - 1; ++j)
+        print(i, j, static_cast<unsigned char>(219), Coloring::COLOR_LIGHTCYAN);
 
 
 
@@ -113,6 +162,8 @@ int main()
     // Timer End /////////////////////////////////////////////////
     auto finish = std::chrono::high_resolution_clock::now();   //
     ////////////////////////////////////////////////////////////
+    // Print trailing newline.
+    printf("\n");
 
     // Accumulate values after. Not incluided in the time.
     times[index++] = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count() / 1000000.0;
@@ -123,9 +174,9 @@ int main()
     for(int i = 0; i < size; ++i)
       sum += times[i];
 
-    std::cout << "ms: " << std::left << std::setw(10) << sum / size << std::right 
+    std::cout << "ms: " << std::left << std::setw(10) << sum / static_cast<double>(size) << std::right
     << ", averaging at " << std::setw(4) << std::left 
-    << (looped ? 100 :  index / size * 100) 
+    << (looped ? 100 :  index / static_cast<double>(size) * 100) 
     << std::right << "%" << '\n';
   }
 
