@@ -120,8 +120,8 @@ void GetScreenSize(int &width, int &height)
   #else
     struct winsize screenSize;
     ioctl(STDOUT_FILENO,TIOCGWINSZ,&screenSize);
-    width = screenSize.ws_row;
-    height = screenSize.ws_col;
+    height = screenSize.ws_row;
+    width = screenSize.ws_col;
   #endif
 }
 
@@ -151,9 +151,16 @@ int main()
     GetScreenSize(width, height);
 
     // Draw the screen. Height offset by 1 to print stats at the end.
-    for(int i = 0; i < width; ++i)
-      for(int j = 0; j < height - 1; ++j)
-        Print(i, j, static_cast<unsigned char>(219), Coloring::COLOR_LIGHTCYAN);
+    for(int i = 0; i < height - 1; ++i)
+    {
+      for(int j = 0; j < width; ++j)
+      {
+        if(j == width-1)
+          Print(i, j, static_cast<unsigned char>('A'), Coloring::COLOR_RED);
+        else
+          Print(i, j, static_cast<unsigned char>('B'), Coloring::COLOR_LIGHTCYAN);
+      }
+    }
 
 
 
