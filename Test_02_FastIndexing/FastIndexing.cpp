@@ -209,8 +209,8 @@ std::string oh;
       }
     }
     //printf(oh.c_str();
-    printf("\033[%d;%dH", 0, 0);
-    std::cout << oh.c_str();
+    printf("\033[%d;%dH%s", 0, 0, oh.c_str());
+    //std::cout << oh.c_str();
     fflush(stdout); 
     oh.clear();
      //////////////////////////////////////////////////////////////
