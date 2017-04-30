@@ -29,7 +29,7 @@ void SetClear(const char* text = "")
 void SetMode(int sgr, int color, const char* text = "")
 {
   sgr = posMod(sgr, MAX_MODE);
-  color = posMod(color, MAX_MODE);
+  color = posMod(color, MAX_COLOR);
   printf(modeFormat, sgr, color, text);
 }
 
@@ -140,7 +140,7 @@ int main(int argc, char const *argv[])
   // no args
   case 1:
     printf("You can use the following arguments:\n");
-    printf("\t1 arg: \t%s <TestNumber:0-%d>\n", argv[0], testCount);
+    printf("\t1 arg: \t%s <TestNumber:0-%d>\n", argv[0], testCount-1);
     printf("\t2 arg: \t%s <sgr:0-%d> <color:0-%d>\n", argv[0], maxMode, maxMode);
     printf("\t3 arg: \t%s <R:0-%d> <G:0-%d> <B:0-%d>\n", argv[0], maxColor, maxColor, maxColor);
     break;
