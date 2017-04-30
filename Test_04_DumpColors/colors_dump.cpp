@@ -60,7 +60,7 @@ void testModes()
     for(int color = MIN_COLOR; color < MAX_COLOR; ++color)
     {
       // Reset color
-      printf("\t[%02d;%02d]: ", code, color);
+      printf("\t[%02d;%03.2d]: ", code, color);
 
       // Start test line
       printf(modeFormat, 22, 31, "R");
@@ -71,7 +71,7 @@ void testModes()
       printf(modeFormat, code, color, test_text);
 
       SetClear();
-      if(color%4 == 3)
+      if(color%3 == 2)
         printf("\n");
     }
     printf("\n\n");
