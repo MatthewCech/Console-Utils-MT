@@ -144,7 +144,7 @@ void Frame::initBuffers()
 void Frame::clearBuffers()
 {
   memset(_bufferChar, ' ', _bufferSize);
-  memset(_bufferAttributes, 0, _bufferSize);
+  memset(_bufferAttributes, 0, _bufferSize * sizeof(Attribute));
   _bufferChar[_bufferSize] = '\0';
 }
 
