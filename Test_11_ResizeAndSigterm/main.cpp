@@ -12,8 +12,13 @@
 #define Delay_Main 10
 
 
-std::thread t_timeCheck;
-bool threadsShouldRun;
+struct Globals
+{
+  std::thread t_timeCheck;
+  bool threadsShouldRun;
+}
+
+Globals globals;
 
 
 void DoTimeCheck(struct winsize *cur, int delay)
@@ -27,7 +32,7 @@ void DoTimeCheck(struct winsize *cur, int delay)
 
 void handle_exit(int s)
 {
-  threadsShouldRun = false;
+  globals.threadsShouldRun = false;
 
   if(t_timeCheck.joinable())
     t_timeCheck.join();
@@ -40,7 +45,7 @@ void handle_exit(int s)
 
 int main (int argc, char **argv)
 {
-  threadsShouldRun = true;
+  globals.threadsShouldRun = true;
 
   struct sigaction sigIntHandler;
   sigIntHandler.sa_handler = handle_exit;
