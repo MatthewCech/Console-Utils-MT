@@ -89,11 +89,14 @@ void Canvas::SetChar(int index, char c) {
 
 void Canvas::SetColor(int x, int y, RGBColor foreground, RGBColor background)
 {
+  if(x < 0 || y < 0 || x > _width-2 || y > _width -1) return;
   SetColor(CoordToIndex(x,y), foreground, background);
 }
 
 void Canvas::SetColor(int index, RGBColor foreground, RGBColor background)
 {
+  if(index < 0 || index > _elementCount-1 || (index % _width == _width-1)) return;
+  
   if(foreground.R >= 0)
   {
     const char* color_fore = RGBColor::RGBString(foreground);
