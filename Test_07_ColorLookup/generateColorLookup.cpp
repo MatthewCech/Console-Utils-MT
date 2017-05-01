@@ -9,9 +9,9 @@ int main(int argc, char const *argv[])
   printf("const char ColorCodeLookup[][] = {\n");
 
   for(int i = 0; i < 256; ++i)
-    printf("  %03d,\n", i);
+    printf("\"%03d\", ", i);
 
-  printf("};\n");
+  printf("\n};\n");
 
   return 0;
 }
