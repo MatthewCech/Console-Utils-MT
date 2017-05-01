@@ -16,8 +16,10 @@ void HandleSig(int s)
 {
   UNUSED(s);
 
+  printf("\033[?25h");     // Show the cursor again
+
   Globals.threadsCanRun = false;
-  
+
   Globals.sizeHandler.join();
 
   // wait for threads to catch up
@@ -38,7 +40,7 @@ void HandleSig(int s)
   std::this_thread::sleep_for (std::chrono::milliseconds(1100));
 
   printf("\033[2J"); // Clears the screen
-  printf("\033[?25h");     // Show the cursor again
+
   exit(1); 
 }
 
