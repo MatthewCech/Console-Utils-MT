@@ -1,7 +1,7 @@
 #pragma once
 
 #include "utilities.hpp"
-#include "globalData.hpp"
+#include "GlobalData.hpp"
 
 #include <signal.h>
 #include <stdlib.h>
