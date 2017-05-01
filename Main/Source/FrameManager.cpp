@@ -90,13 +90,17 @@ void FrameManager::Update()
           const int xf = startX + x;
           const int yf = startY + y;
           const int posf = y * f->_width + x;
+          //if(xf > _width - 1)
+          //  continue;
+          //if(yf > _height - 1)
+           // continue;
           _canvas.SetChar(xf, yf, f->_bufferChar[posf]);
           _canvas.SetColor(xf, yf, f->_bufferAttributes[posf].Foreground ,f->_bufferAttributes[posf].Background);
         }
       }
   }
   //_canvas.SetColorMany(0, 0, -1, { -1 }, { 5,0,0});
-  printf("\033[0;0H%s", _canvas.GetBuffer());
+  //printf("\033[0;0H%s", _canvas.GetBuffer());
   _canvas.ResetBuffer();
 }
 
@@ -161,10 +165,10 @@ void FrameManager::updateOrderingBuffer()
         if(pos > _bufferSize - 1 || pos < 0)
           continue;
 
-        if(_ordering[pos].ID == 0) // If no ID has been assigned, we're in!
+        //if(_ordering[pos].ID == 0) // If no ID has been assigned, we're in!
           _ordering[pos] = LayerInfo(id, layer);
-        else if(_ordering[pos].Layer < layer)
-          _ordering[pos] = LayerInfo(id, layer);
+        //else if(_ordering[pos].Layer < layer)
+        //  _ordering[pos] = LayerInfo(id, layer);
       }
   }
 }

@@ -49,7 +49,7 @@ void Canvas::UpdateBufferSize(int width, int height)
 // Copies the clean buffer over the current buffer
 void Canvas::ResetBuffer()
 {
-  if(_buffer) delete _buffer;
+  if(_buffer) delete[] _buffer;
   _buffer = new CanvasElement[_elementCount+1];
   memcpy(_buffer, _cleanBuff, sizeof(CanvasElement)*(_elementCount+1));
 }
@@ -79,7 +79,7 @@ std::pair<int, int> Canvas::IndexToCoord(int index)
 
 // Setting individual Characters
 void Canvas::SetChar(int x, int y, char c) {
-  if(x < 0 || y < 0 || x > _width-2 || y > _width -1) return;
+  if(x < 0 || y < 0 || x > _width-2 || y > _height -1) return;
   _buffer[CoordToIndex(x,y)].print_char = c;
 }
 void Canvas::SetChar(int index, char c) {
