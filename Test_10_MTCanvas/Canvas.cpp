@@ -24,6 +24,10 @@ Canvas::~Canvas()
 
 void Canvas::UpdateBufferSize(int width, int height)
 {
+  _width = width;
+  _height = height;
+  _elementCount = _width*_height;
+
   if(_cleanBuff) delete[] _cleanBuff;
   _cleanBuff = new CanvasElement[_elementCount+1];
   // The last element acts as null terminator
@@ -36,7 +40,7 @@ void Canvas::UpdateBufferSize(int width, int height)
       _cleanBuff[index].print_char = '\n';
 
   // reset characters, etc on last newline
-  CanvasElement& last = _cleanBuff[_elementCount-1];  
+  //CanvasElement& last = _cleanBuff[_elementCount-1];  
 
   // Copy the clean buffer over our normal buffer
   ResetBuffer();
@@ -81,13 +85,13 @@ void Canvas::SetColor(int x, int y, RGBColor foreground, RGBColor background)
 
 void Canvas::SetColor(int index, RGBColor foreground, RGBColor background)
 {
-  if(foreground.r >= 0)
+  if(foreground.R >= 0)
   {
     const char* color_fore = RGBColor::RGBString(foreground);
     memcpy(_buffer[index].color_front, color_fore, sizeof(char)*3);
   }
 
-  if(background.r >= 0)
+  if(background.R >= 0)
   {
     const char* color_back = RGBColor::RGBString(background);
     memcpy(_buffer[index].color_back,  color_back, sizeof(char)*3);

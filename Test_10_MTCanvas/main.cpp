@@ -7,7 +7,8 @@
 
 int main(int argc, char const *argv[])
 {
-  Canvas canvas(80,10);
+  Canvas canvas; // constructed with default size
+  canvas.UpdateBufferSize(10,10);
 
   canvas.SetColorMany(0,0, -1, {-1}, {1,2,0});
 
