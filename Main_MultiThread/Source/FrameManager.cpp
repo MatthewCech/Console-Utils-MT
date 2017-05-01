@@ -200,6 +200,7 @@ bool FrameManager::updateDimensions()
 
   if(height != _height || _width != width)
   {
+      printf("\033[2J"); // Clears the screen
     _width = width;
     _height = height;
     _bufferSize = width * height;

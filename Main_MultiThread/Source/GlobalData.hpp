@@ -10,6 +10,7 @@ struct GlobalData
   int height;
   bool ThreadDebug;
   int Loops;
+  double Time;
 };
 
 extern GlobalData Globals;
