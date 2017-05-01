@@ -1,5 +1,6 @@
 #include "Canvas.hpp"
 #include <cstring>
+#include <stdio.h>
 
 // generate statics
 
@@ -26,12 +27,16 @@ void Canvas::UpdateBufferSize(int width, int height)
   if(_cleanBuff) delete[] _cleanBuff;
   _cleanBuff = new CanvasElement[_elementCount+1];
   // The last element acts as null terminator
+  
   _cleanBuff[_elementCount].meta_CSI_1[0] = '\0';
 
   // initialize the newlines
   for(int index = 0; index < _elementCount; ++index)
     if(index%_width == _width-1) 
       _cleanBuff[index].print_char = '\n';
+
+  // reset characters, etc on last newline
+  CanvasElement& last = _cleanBuff[_elementCount-1];  
 
   // Copy the clean buffer over our normal buffer
   ResetBuffer();
@@ -42,7 +47,7 @@ void Canvas::ResetBuffer()
 {
   if(_buffer) delete _buffer;
   _buffer = new CanvasElement[_elementCount+1];
-  memcpy(_buffer, _cleanBuff, _elementCount+1);
+  memcpy(_buffer, _cleanBuff, sizeof(CanvasElement)*(_elementCount+1));
 }
 
 char *Canvas::GetBuffer()
@@ -52,7 +57,7 @@ char *Canvas::GetBuffer()
 
 
 // 2d->1d
-inline int Canvas::CoordToIndex(int x, int y) 
+int Canvas::CoordToIndex(int x, int y) 
 {
   // TODO: X/Y Assertion
   return x+_width*y;
@@ -67,27 +72,30 @@ std::pair<int, int> Canvas::IndexToCoord(int index)
 
 // Setting individual Characters
 void Canvas::SetChar(int x, int y, char c) { SetChar(CoordToIndex(x,y), c); }
-inline void Canvas::SetChar(int index, char c) { _buffer[index].print_char = c; }
+void Canvas::SetChar(int index, char c) { _buffer[index].print_char = c; }
 
 void Canvas::SetColor(int x, int y, RGBColor foreground, RGBColor background)
 {
   SetColor(CoordToIndex(x,y), foreground, background);
 }
-inline void Canvas::SetColor(int index, RGBColor foreground, RGBColor background)
+void Canvas::SetColor(int index, RGBColor foreground, RGBColor background)
 {
   const char* color_fore = RGBColor::RGBString(foreground);
   const char* color_back = RGBColor::RGBString(background);
+
+  //printf("FOREGROUND IS: %s\n", color_fore);
+  //printf("BACKGROUND IS: %s\n", color_back);
 
   memcpy(_buffer[index].color_front, color_fore, sizeof(char)*3);
   memcpy(_buffer[index].color_back,  color_back, sizeof(char)*3);
 }
 
 // Setting a whole string
-inline void Canvas::SetString(int x, int y, const char* str) 
+void Canvas::SetString(int x, int y, const char* str) 
 { 
   SetString(CoordToIndex(x, y), str); 
 }
-inline void Canvas::SetString(int index, const char* str) 
+void Canvas::SetString(int index, const char* str) 
 {
   int remain = _elementCount - index;
   for(int i = 0; i < remain; ++i)

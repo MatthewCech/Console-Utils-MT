@@ -21,7 +21,7 @@ struct CanvasElement
   char delim_2[1]     = {'m'};
 
   //  "@"
-  char print_char    = '@';
+  char print_char    = ' ';
 
   // NO NULL TERM
 };
@@ -63,8 +63,8 @@ public:
   void SetChar(int x, int y, char c);
   void SetChar(int index, char c);
 
-  void SetColor(int x, int y, RGBColor foreground, RGBColor background);
-  void SetColor(int index, RGBColor foreground, RGBColor background);
+  void SetColor(int x, int y, RGBColor foreground, RGBColor background = {0,0,0});
+  void SetColor(int index, RGBColor foreground, RGBColor background = {0,0,0});
 
   void SetString(int x, int y, const char* str);
   void SetString(int index, const char* str);

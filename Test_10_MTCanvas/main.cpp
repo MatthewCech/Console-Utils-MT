@@ -7,16 +7,21 @@
 
 int main(int argc, char const *argv[])
 {
-  Canvas canvas(2,2);
+  Canvas canvas(80,10);
 
-  canvas.SetChar(0, 0, '@');
-  //canvas.SetChar(3, 3, 'A');
-  canvas.SetColor(0, 0, {5,0,0}, {0,2,0});
 
-  //printf("\033[0;0H%s\n", canvas.GetBuffer());
+  canvas.SetChar(0, 0, '0');
+  canvas.SetColor(0, 0, {5,0,0});
+
+  canvas.SetChar(3, 3, '3');
+  canvas.SetColor(3, 3, {0,5,5});
+
+  canvas.SetChar(5, 5, '5');
+  canvas.SetColor(5, 5, {0,5,0});
+
+  //printf("%s\n", canvas.GetBuffer());
+  printf("\033[0;0H%s", canvas.GetBuffer());
   
-  printf("%s\n", canvas.GetBuffer());
   fflush(stdout);
-
   return 0;
 }
