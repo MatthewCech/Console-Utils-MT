@@ -21,7 +21,7 @@ struct CanvasElement
   char delim_2[1]     = {'m'};
 
   //  "@"
-  char print_char    = ' ';
+  char print_char    = '-';
 
   // NO NULL TERM
 };

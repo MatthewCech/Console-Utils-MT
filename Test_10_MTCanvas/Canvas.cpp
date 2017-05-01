@@ -128,7 +128,7 @@ void Canvas::SetColorMany(int index, int count, RGBColor foreground, RGBColor ba
   {
     if((index+i)%_width == _width-1)
     {
-      --remain;
+      //remain;
       continue;
     }
     // return if we hit the end of the string

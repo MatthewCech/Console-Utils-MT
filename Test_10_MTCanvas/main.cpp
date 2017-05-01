@@ -9,15 +9,13 @@ int main(int argc, char const *argv[])
 {
   Canvas canvas(80,10);
 
+  canvas.SetColorMany(0,0, 2000, {-1}, {1,2,0});
 
-  canvas.SetString(0, 0, "DERP");
-  canvas.SetColorMany(0, 0, 3, {-1}, {5,0,0});
+  std::string blah = "THIS IS A VERY LONaasdfasdfjasdfkjahsdlkfjhasdlkfjhaksjldhflakjshdflkajhsdflkahjsdflkjashdflkajshdflkjashdflkajshdflkashfkjhaG STRING!";
 
-  canvas.SetChar(3, 3, '3');
-  canvas.SetColor(3, 3, {-1}, {0,5,5});
+  canvas.SetString(60, 8, blah.c_str());
+  canvas.SetColorMany(60, 8, blah.size(), {-1}, {5,0,0});
 
-  canvas.SetChar(5, 5, '5');
-  canvas.SetColor(5, 5, {0,5,0});
 
   //printf("%s\n", canvas.GetBuffer());
   printf("\033[0;0H%s", canvas.GetBuffer());
