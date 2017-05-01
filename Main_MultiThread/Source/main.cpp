@@ -9,9 +9,9 @@
 
 int main(int argc, char** argv)
 {
+  Globals.ThreadDebug = true;
   Globals.threadsCanRun = true;
   Globals.sizeHandler = std::thread(Thread_CaptureConsoleSize, SIZE_CHECK_FREQUENCY);
-
   InitSigHandler();
 
   int threadCount = 4;

@@ -89,7 +89,7 @@ Frame *FrameManager::CreateFrame(int x, int y, int width, int height, int layer)
 
 
 // Update frame!
-void FrameManager::Thread_UpdateFrame(const Frame *f)
+void FrameManager::Thread_UpdateFrame(const Frame *f, int tid)
 {
   const int id = f->ID();
   const int startX = f->PosX();
@@ -112,7 +112,11 @@ void FrameManager::Thread_UpdateFrame(const Frame *f)
         //  continue;
         //if(yf > _height - 1)
          // continue;
-        _canvas.SetChar(xf, yf, f->_bufferChar[posf]);
+        char toPrint = f->_bufferChar[posf];
+        if(Globals.ThreadDebug)
+          toPrint = '0' + tid;
+
+        _canvas.SetChar(xf, yf, toPrint);
         _canvas.SetColor(xf, yf, f->_bufferAttributes[posf].Foreground ,f->_bufferAttributes[posf].Background);
       }
     }
@@ -137,7 +141,9 @@ Frame *FrameManager::Thread_GetNextFrame()
   Frame *f = begin->second;
   ++_frameIterOffset;
   if(++begin == _frames.end())
+  {
     _frameIterOffset = 0;
+  }
   return f;
 }
 

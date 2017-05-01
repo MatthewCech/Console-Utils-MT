@@ -26,7 +26,7 @@ public:
   void Update();
 
   // Thread related
-  void Thread_UpdateFrame(const Frame *f);
+  void Thread_UpdateFrame(const Frame *f, int tid);
   void Thread_WaitYourTurn();
   Frame *Thread_GetNextFrame();
 

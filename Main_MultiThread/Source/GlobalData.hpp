@@ -8,6 +8,7 @@ struct GlobalData
   std::thread sizeHandler;
   int width;
   int height;
+  bool ThreadDebug;
 };
 
 extern GlobalData Globals;
