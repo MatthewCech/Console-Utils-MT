@@ -1,7 +1,10 @@
 #include "FrameManager.hpp"
+#include "Thread_FrameData.hpp"
 #include <stdio.h>
 #include <memory>
 #include <cstring>
+#include <thread>
+
 
 // *Nix specifically
 #include <sys/ioctl.h>
@@ -11,7 +14,7 @@
 // Default ctor, initializes with no frames.
 // you probably do NOT want to set adjustment values at all in 
 // any production code.
-FrameManager::FrameManager(int adjustmentX, int adjustmentY)
+FrameManager::FrameManager(int adjustmentX, int adjustmentY, int threadCount)
  : _frames()
  , _bufferSize(0)
  , _next_id(1)
@@ -19,12 +22,20 @@ FrameManager::FrameManager(int adjustmentX, int adjustmentY)
  , _height(0)
  , _adjustmentX(adjustmentX)
  , _adjustmentY(adjustmentY)
+ , _threadCount(threadCount)
  , _ordering(nullptr)
  , _canvas()
+ , _threads()
 {
   updateDimensions();
   _canvas.UpdateBufferSize(_width + 1, _height);
   initOrderingBuffer();
+
+  for(int i = 0; i < _threadCount; ++i)
+  {
+    Thread_FrameData_Info info{i, this};
+    _threads.push_back(std::thread(Thread_FrameData_Main, info));
+  }
 }
 
 // Destructor, cleans all frames up.
@@ -32,6 +43,9 @@ FrameManager::~FrameManager()
 {
   for(auto &iter : _frames)
     delete iter.second;
+
+  for(auto &iter : _threads)
+    iter.join();
 }
 
 // Gets and returns frame with id arg1. 
@@ -60,6 +74,36 @@ Frame *FrameManager::CreateFrame(int x, int y, int width, int height, int layer)
   return f;
 }
 
+// Update frame
+void FrameManager::Thread_UpdateFrame(const Frame *f)
+{
+  const int id = f->ID();
+  const int startX = f->PosX();
+  const int startY = f->PosY();
+  const int width = f->Width();
+  const int height = f->Height();
+
+  for(int x = 0; x < width; ++x)
+    for(int y = 0; y < height; ++y)
+    {
+      const int pos = (startY + y) * _width + (startX + x); 
+      if(pos > _bufferSize - 1)
+        continue;
+      if(_ordering[pos].ID == id)
+      {
+        const int xf = startX + x;
+        const int yf = startY + y;
+        const int posf = y * f->_width + x;
+        //if(xf > _width - 1)
+        //  continue;
+        //if(yf > _height - 1)
+         // continue;
+        _canvas.SetChar(xf, yf, f->_bufferChar[posf]);
+        _canvas.SetColor(xf, yf, f->_bufferAttributes[posf].Foreground ,f->_bufferAttributes[posf].Background);
+      }
+    }
+}
+
 // Draws all frames to the canvas.
 void FrameManager::Update()
 {
@@ -70,35 +114,10 @@ void FrameManager::Update()
     _canvas.UpdateBufferSize(_width, _height);
   }
 
-  for(auto &iter : _frames)
-  {
-    const Frame *f = iter.second;
-    const int id = f->ID();
-    const int startX = f->PosX();
-    const int startY = f->PosY();
-    const int width = f->Width();
-    const int height = f->Height();
+  //for(auto &iter : _frames)
+  //{
+  //}
 
-    for(int x = 0; x < width; ++x)
-      for(int y = 0; y < height; ++y)
-      {
-        const int pos = (startY + y) * _width + (startX + x); 
-        if(pos > _bufferSize - 1)
-          continue;
-        if(_ordering[pos].ID == id)
-        {
-          const int xf = startX + x;
-          const int yf = startY + y;
-          const int posf = y * f->_width + x;
-          //if(xf > _width - 1)
-          //  continue;
-          //if(yf > _height - 1)
-           // continue;
-          _canvas.SetChar(xf, yf, f->_bufferChar[posf]);
-          _canvas.SetColor(xf, yf, f->_bufferAttributes[posf].Foreground ,f->_bufferAttributes[posf].Background);
-        }
-      }
-  }
   //_canvas.SetColorMany(0, 0, -1, { -1 }, { 5,0,0});
   printf("\033[0;0H%s", _canvas.GetBuffer());
   _canvas.ResetBuffer();

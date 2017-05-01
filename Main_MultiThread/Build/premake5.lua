@@ -60,6 +60,9 @@ workspace "Canvases_MT"                         -- Solution Name
     filter { "system:macosx", "action:gmake" }
       linkoptions { "-rpath @executable_path/lib" }   
     
+    filter { "system:linux"}
+      linkoptions { "-lpthread" }
+
     -- when building any visual studio project
     filter { "system:windows", "action:vs*"}
       flags         { "MultiProcessorCompile", "NoMinimalRebuild" }

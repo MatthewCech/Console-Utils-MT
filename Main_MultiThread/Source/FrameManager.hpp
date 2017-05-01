@@ -6,6 +6,8 @@
 #include "Frame.hpp"
 #include <unordered_map>
 #include "Canvas.hpp"
+#include <thread>
+#include <vector>
 
 
 class FrameManager
@@ -13,11 +15,12 @@ class FrameManager
   friend Frame;
 public:
   // Constructor
-  FrameManager(int adjustmentX = 0, int adjustmentY = 0);
+  FrameManager(int adjustmentX = 0, int adjustmentY = 0, int threadCount = 1);
   ~FrameManager();
   Frame *CreateFrame(int x, int y, int width, int height, int layer = 0);
   Frame *GetFrame(int id);
   void DeleteFrame(int id);
+  void Thread_UpdateFrame(const Frame *f);
   void Update();
 
   // Information
@@ -26,6 +29,8 @@ public:
   int GetFrameCount() const;
 
 private:
+  
+
   // Private Member functions
   bool updateDimensions();
   void initOrderingBuffer();
@@ -39,6 +44,7 @@ private:
   int _height;
   int _adjustmentX;
   int _adjustmentY;
+  int _threadCount;
 
   struct LayerInfo
   {
@@ -49,4 +55,5 @@ private:
   };
   LayerInfo *_ordering; // For each index, has the ID of the frame that can draw there.
   Canvas _canvas;
+  std::vector<std::thread> _threads;
 };
