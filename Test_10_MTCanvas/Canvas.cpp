@@ -63,6 +63,9 @@ char *Canvas::GetBuffer()
 // 2d->1d
 int Canvas::CoordToIndex(int x, int y) 
 {
+  ASSERT_X(x);
+  ASSERT_Y(y);
+
   // TODO: X/Y Assertion
   return x+_width*y;
 }
@@ -75,8 +78,14 @@ std::pair<int, int> Canvas::IndexToCoord(int index)
 }
 
 // Setting individual Characters
-void Canvas::SetChar(int x, int y, char c) { SetChar(CoordToIndex(x,y), c); }
-void Canvas::SetChar(int index, char c) { _buffer[index].print_char = c; }
+void Canvas::SetChar(int x, int y, char c) {
+  if(x < 0 || y < 0 || x > _width-2 || y > _width -1) return;
+  _buffer[CoordToIndex(x,y)].print_char = c;
+}
+void Canvas::SetChar(int index, char c) {
+  if(index < 0 || index > _elementCount-1 || (index % _width == _width-1)) return;
+  _buffer[index].print_char = c; 
+}
 
 void Canvas::SetColor(int x, int y, RGBColor foreground, RGBColor background)
 {
@@ -141,4 +150,17 @@ void Canvas::SetColorMany(int index, int count, RGBColor foreground, RGBColor ba
     if(i >= count) return;
     SetColor(index+i, foreground, background);
   }
+}
+
+
+void Canvas::AssertX(int x)
+{
+  if(x < 0 || x > _width-2)
+    throw CanvasBoundException("INVALID X");
+}
+
+void Canvas::AssertY(int y)
+{
+  if(y < 0 || y > _width-2)
+    throw CanvasBoundException("INVALID Y");
 }

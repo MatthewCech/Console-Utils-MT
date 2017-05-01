@@ -2,6 +2,18 @@
 
 #include <utility> // pair
 #include "RGBColor.hpp"
+#include <exception>
+#include <string>
+
+//#define VALIDATE_COORDS
+
+#ifdef VALIDATE_COORDS
+#define ASSERT_X(v) AssertX(v)
+#define ASSERT_Y(v) AssertY(v)
+#else
+#define ASSERT_X(v)
+#define ASSERT_Y(v)
+#endif
 
 
 // Pack all chars so we can treat it as string
@@ -72,5 +84,15 @@ public:
   void SetColorMany(int x, int y, int count, RGBColor foreground, RGBColor background = {-1});
   void SetColorMany(int index, int count, RGBColor foreground, RGBColor background = {-1});
 
-
+  void AssertX(int x);
+  void AssertY(int y);
 };
+
+struct CanvasBoundException : public std::exception
+{
+   std::string s;
+   CanvasBoundException(std::string ss) : s(ss) {}
+   ~CanvasBoundException() throw () {} // Updated
+   const char* what() const throw() { return s.c_str(); }
+};
+
