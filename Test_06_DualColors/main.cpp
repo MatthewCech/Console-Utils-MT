@@ -14,10 +14,24 @@ const char* colorBack256 = "\033[48;005;%03dm%s";
 // 256 color mode for foreground
 const char* colorFront256 = "\033[38;005;%03dm%s";
 
+typedef const char *ColorString;
+const ColorString ColorCodeLookup[] = {
+  #include "colorLookup.inl"
+};
 
-const char ColorCodeLookup[][] = {
-  #include
-}
+// Attribute Layout
+const char* colorLayout[] = {
+  "\033[",  // CSI (control sequence introducer)
+  "38;5;", 
+            // [2-3] color - 38:foreground, 48:background
+            // (5)   use rgb
+  "%03dm"   // [8-11] color value - 0-256
+};
+
+const int offset_colorFore =  7; // index 7-9
+const int offset_colorBack = 18; // index 18-20
+const int offset_printChar = 22; // index 22
+
 
 
 inline int posMod(int val, int max)
@@ -26,6 +40,7 @@ inline int posMod(int val, int max)
   if(val < 0) val+=max;
   return val;
 }
+
 
 inline void SetClear(const char* text = "")
 {
@@ -58,73 +73,79 @@ inline void SetColor(int r, int g, int b, bool background = true, const char* te
 }
 
 
-
-void SetAttribute(char* attribute, char* colorFore, char* colorBack, char toPrint)
+void SetCharacter(char* attribute, char toPrint)
 {
-  int offset_colorFore =  7; // index 7-9
-  int offset_colorBack = 18; // index 18-20
-  int offset_printChar = 22; // index 22
-
-  memcpy(attribute + offset_colorFore, colorFore, 3*sizeof(char));
-  memcpy(attribute + offset_colorBack, colorBack, 3*sizeof(char));
   attribute[offset_printChar] = toPrint;
 }
 
+void SetAttribute(char* attribute, unsigned char colorFore, unsigned char colorBack)
+{
+  memcpy(attribute + offset_colorFore, ColorCodeLookup[colorFore], 3*sizeof(char));
+  memcpy(attribute + offset_colorBack, ColorCodeLookup[colorBack], 3*sizeof(char));
+}
 
 
 
 int main(int argc, char const *argv[])
 {
-  printf("[48;005;%03dm%s\n",123,"-");
-  printf("[48;005;%03dm%s\n",1,"-");
-
-  // 256 color mode for background
-  const char* colorBack256 = "\033[48;005;%03dm%s";
-  // 256 color mode for foreground
-  const char* colorFront256 = "\033[38;005;%03dm%s";
-
-  const char* testText = "Test   Text!!!\n";
-
-  // background
-  printf(colorBack256,  RGBIndex(5,0,0), testText);
-  printf(colorFront256, RGBIndex(0,5,0), testText);
-  printf(colorBack256,  RGBIndex(0,0,5), testText);
-  printf(colorFront256, RGBIndex(5,4,0), testText);
   SetClear("\n");
-
-  // Attribute Layout
-  const char* colorLayout[] = {
-    "\033[",  // CSI (control sequence introducer)
-    "38;5;", 
-              // [2-3] color - 38:foreground, 48:background
-              // (5)   use rgb
-    "%03dm"   // [8-11] color value - 0-256
-  };
-
 
   std::string attributeFormat = "\033[38;5;%03dm\033[48;5;%03dm%s";
 
   // @ symbols need to be overwritten!
-  char attributeChunk[] = "\033[38;5;@@@m\033[48;5;@@@m@";
+  char symbolChunk[] = "\033[38;5;@@@m\033[48;5;@@@m@";
+  const int symbolChunkSize = sizeof(symbolChunk)/sizeof(symbolChunk[0]) - 1;
 
-  char *colorOne = (char *)"196";
-  char *colorTwo = (char *)"051";
-  char toPrint = 'X';
+  int width = 80;
+  int height = 10;
+  int effective_width = width-1;
+
+  // bytesize of one line
+  int symbolLineSize = width*symbolChunkSize;
+
+  // Create Buffer
+  char CanvasBuffer[symbolLineSize*height + 1];
+  CanvasBuffer[symbolLineSize*height] = '\0'; // make sure it is null terminated!
+
+  // Fill buffer with defaults
+  for(int y = 0; y < height; ++y)
+  {
+    int curLine = symbolLineSize*y;
+    for(int x = 0; x < width; ++x)
+    {
+      int curIndex = curLine + symbolChunkSize*x;
+      // copy default values;
+      memcpy(CanvasBuffer + curIndex, symbolChunk, symbolChunkSize);
+      SetAttribute(CanvasBuffer + curIndex, RGBIndex(5,5,5), RGBIndex(0,0,0));
+
+      if(x == effective_width)
+        SetCharacter(CanvasBuffer + curIndex, '\n');
+      else
+        SetCharacter(CanvasBuffer + curIndex, ' ');
+    }
+  }
 
 
+  int count = 0;
+  int printed = -1;
+  while(true)
+  {
+    
+    for(int index = 0; index < width*height; ++index)
+    {
+      if(index%width != width-1)
+      {
+        SetCharacter(CanvasBuffer + index*symbolChunkSize, 'A' + (count)%26);
+        char color = RGBIndex((count/36)%6, (count/6)%6, count%6);
+        SetAttribute(CanvasBuffer + index*symbolChunkSize, RGBIndex(5,5,5), color);
+      }
+    }
+    
+    ++count;
+    printf("\033[0;0H%s\n", CanvasBuffer);
+    fflush(stdout);
+  }
 
-
-  SetAttribute(attributeChunk, colorOne, colorTwo, toPrint);
-  printf("%s", attributeChunk);
-  SetClear("\n");
-
-  toPrint = 'A';
-  SetAttribute(attributeChunk, colorTwo, colorOne, toPrint);
-
-  printf("%s", attributeChunk);
-          
-
-  SetClear("\n");
 
   return 0;
 }
