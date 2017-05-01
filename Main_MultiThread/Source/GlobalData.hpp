@@ -9,6 +9,7 @@ struct GlobalData
   int width;
   int height;
   bool ThreadDebug;
+  int Loops;
 };
 
 extern GlobalData Globals;

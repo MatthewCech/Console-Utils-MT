@@ -34,9 +34,8 @@ public:
   int ScreenWidth() const;
   int ScreenHeight() const;
   int GetFrameCount() const;
-private:
   
-
+private:
   // Private Member functions
   bool updateDimensions();
   void initOrderingBuffer();
@@ -47,7 +46,7 @@ private:
   std::mutex _frameLock;
   int _frameIterOffset; 
   Semaphore _frameSem;
-  
+
   int _bufferSize;
   int _next_id;
   int _width;

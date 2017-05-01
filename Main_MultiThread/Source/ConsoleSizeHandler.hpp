@@ -14,7 +14,7 @@
 void Thread_CaptureConsoleSize(int delay)
 {
   struct winsize screenSize;
-
+  auto start = std::chrono::high_resolution_clock::now();  
   while(Globals.threadsCanRun)
   {
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &screenSize);

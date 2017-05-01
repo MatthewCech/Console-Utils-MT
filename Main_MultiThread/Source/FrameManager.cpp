@@ -142,6 +142,7 @@ Frame *FrameManager::Thread_GetNextFrame()
   ++_frameIterOffset;
   if(++begin == _frames.end())
   {
+    ++Globals.Loops;
     _frameIterOffset = 0;
   }
   return f;
@@ -158,10 +159,6 @@ void FrameManager::Update()
     updateOrderingBuffer();
     _canvas.UpdateBufferSize(_width, _height);
   }
-
-  //for(auto &iter : _frames)
-  //{
-  //}
 
   //_canvas.SetColorMany(0, 0, -1, { -1 }, { 5,0,0});
   printf("\033[0;0H%s", _canvas.GetBuffer());
