@@ -42,11 +42,27 @@ void DoMultiThreadTest(int threadCount, int windowCount = 12)
       double avg = Globals.Time/Globals.Loops;  // ms per loop
       int fps = static_cast<int>(100/avg) * 10; // Loops per second (1000*ms) - rounded to nearest 10
 
-      printf("\033[38;5;25m\033[%d;%dH[ Width: %4d |   Height: %4d |   %s %2d |   Windows: %3d |   DEBUG: %s ]\033[0m   \n",
-        manager.ScreenHeight() + 2, 6, manager.ScreenWidth(), manager.ScreenHeight(), ((threadCount == 1) ? "Thread: " : "Threads:"), threadCount, windowCount, Globals.ThreadDebug ? " ENABLED" : "DISABLED");
-      
-      printf("\033[38;5;33m\033[%d;%dH[ Loops: %7d |   Time: %7.3f seconds |   Avg: %7.4f ms/loop |   FPS: %6d ]\033[0m   \n", 
-        manager.ScreenHeight() + 3, 6, Globals.Loops, Globals.Time/1000, avg, fps);
+      if(Globals.width > 95)
+      {
+        printf("\033[38;5;25m\033[%d;%dH[ Width: %4d |   Height: %4d |   %s %2d |   Windows: %3d |   DEBUG: %s ]\033[0m   \n",
+          manager.ScreenHeight() + 2, 6, manager.ScreenWidth(), manager.ScreenHeight(), ((threadCount == 1) ? "Thread: " : "Threads:"), threadCount, windowCount, Globals.ThreadDebug ? " ENABLED" : "DISABLED");
+        
+        printf("\033[38;5;33m\033[%d;%dH[ Loops: %7d |   Time: %7.3f seconds |   Avg: %7.4f ms/loop |   FPS: %6d ]\033[0m   \n", 
+          manager.ScreenHeight() + 3, 6, Globals.Loops, Globals.Time/1000, avg, fps);
+      }
+      else if(Globals.width > 37)
+      {
+        printf("\033[38;5;25m\033[%d;%dH[ %s %2d |   Windows: %3d ]\033[0m   \n",
+          manager.ScreenHeight() + 2, 3, ((threadCount == 1) ? "Thread: " : "Threads:"), threadCount, windowCount );
+        
+        printf("\033[38;5;33m\033[%d;%dH[ Avg: %7.4f |   FPS: %6d ]\033[0m   \n", 
+          manager.ScreenHeight() + 3, 3, avg, fps);
+      }
+      else if(Globals.width > 11)
+      {
+        printf("\033[38;5;33m\033[%d;%dH[ %6d ]\033[0m   \n", 
+          manager.ScreenHeight() + 2, 1, fps);
+      }
     }
     // Destructor will now join all the threads
   }

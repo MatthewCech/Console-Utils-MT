@@ -29,7 +29,28 @@ void Canvas::UpdateBufferSize(int width, int height)
   _elementCount = _width*_height;
 
   if(_cleanBuff) delete[] _cleanBuff;
-  _cleanBuff = new CanvasElement[_elementCount+1];
+
+//  int attempts = 5;
+
+  // while(attempts > 0)
+  // {
+  //   try
+  //   {
+        _cleanBuff = new CanvasElement[_elementCount+1];
+  //     break;
+  //   }
+  //   catch(...) 
+  //   {
+  //     if(attempts > 0)
+  //       --attempts;
+  //     else
+  //     {
+  //       printf("\033[?25h");     // Show the cursor again
+  //       throw "UNABLE TO ALLOCATE! :<";
+  //     }
+  //   }
+  // }
+
   // The last element acts as null terminator
   
   _cleanBuff[_elementCount].meta_CSI_1[0] = '\0';

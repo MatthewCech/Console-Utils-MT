@@ -25,8 +25,8 @@ void Thread_CaptureConsoleSize(int delay)
     auto now = std::chrono::high_resolution_clock::now();
     Globals.Time = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start).count() / 1000000.0;
 
-    Globals.width = screenSize.ws_col;
-    Globals.height = screenSize.ws_row;
+    Globals.width = (screenSize.ws_col > 5) ? screenSize.ws_col : 5;
+    Globals.height = (screenSize.ws_row > 2) ? screenSize.ws_row  : 2;
     std::this_thread::sleep_for (std::chrono::milliseconds(delay));
   }
 }

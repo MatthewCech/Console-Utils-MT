@@ -15,9 +15,9 @@ int main(int argc, char** argv)
   if(argc == 1)
   {
     printf("INSTRUCTIONS: \n");
-    printf("\t 1.\tScale console as desired. Width/Height will be used for Canvas.\n");
-    printf("\t 2.\tEnter the following arguments:\n");
-    printf("\t\t%s  [ThreadCount(1:16)]  <WindowCount(1:99)>  <Debug(t:f)>\n", argv[0]);
+    printf("  1. Scale console as desired. Width/Height will be used for Canvas.\n");
+    printf("  2. Enter the following arguments:\n");
+    printf("     %s  [ThreadCount(1:16)]  <WindowCount(1:99)>  <Debug(t:f)>\n", argv[0]);
     printf("\n");
 
     return 0;
@@ -43,6 +43,8 @@ int main(int argc, char** argv)
 
   Globals.Loops = 0;
   Globals.Time = 0;
+  Globals.width = 10;
+  Globals.height = 10;
 
   Globals.threadsCanRun = true;
   Globals.sizeHandler = std::thread(Thread_CaptureConsoleSize, SIZE_CHECK_FREQUENCY);
