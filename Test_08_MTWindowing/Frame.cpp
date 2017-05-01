@@ -1,21 +1,25 @@
 #include <stdio.h>
 #include <string.h>
+#include <memory>
 #include "Frame.hpp"
 
 
 
 // Non-default Ctor, takes an offset and a size + unique ID.
 // ID can NOT be changed post-construction.
-Frame::Frame(int id, int x, int y, int width, int height ) 
+Frame::Frame(int id, int x, int y, int width, int height, int layer) 
  : _posX(x)
  , _posY(y)
  , _width(width)
  , _height(height)
+ , _layer(layer)
  , _id(id)
  , _bufferSize(width * height)
- , _bufferChar(new char[_bufferSize])
+ , _bufferChar(new char[_bufferSize + 1])
  , _bufferAttributes(new Attribute[_bufferSize])
- {  }
+{
+  clearBuffers();
+}
 
 
 Frame::~Frame()
@@ -35,7 +39,7 @@ void Frame::Write(char c, int x, int y, ColorRGB fg, ColorRGB bg)
 // and gives the character color <fg>, and the background the color <bg>.
 // User must guarentee <buf> is at least <size> large. Undefined
 // behavior may result otherwise.
-void Frame::Write(char *buf, int size, int x, int y, ColorRGB fg, ColorRGB bg)
+void Frame::Write(const char *buf, int size, int x, int y, ColorRGB fg, ColorRGB bg)
 {
   // No drawing outside the frame.
   if(!inRange(x, 0, _width - 1))
@@ -59,7 +63,7 @@ void Frame::Write(char *buf, int size, int x, int y, ColorRGB fg, ColorRGB bg)
 
 // Repositions the window in the canvas.
 // Size does not change.
-void Frame::Relocate(int x, int y)
+void Frame::SetLocation(int x, int y)
 {
   throw __func__;
 }
@@ -72,14 +76,13 @@ void Frame::SetSize(int width, int height)
   throw __func__;
 }
 
-int Frame::Width() const
+// Sets the layer of the current frame.
+void Frame::SetLayer(int newLayer)
 {
-  return _height;
+  _layer = newLayer;
+  throw __func__;
 }
-int Frame::Height() const
-{
-  return _height;
-}
+
 int Frame::PosX() const
 {
   return _posX;
@@ -88,6 +91,18 @@ int Frame::PosY() const
 {
   return _posY;
 }
+int Frame::Width() const
+{
+  return _width;
+}
+int Frame::Height() const
+{
+  return _height;
+}
+int Frame::Layer() const
+{
+  return _layer;
+}
 
 // Initializes the buffers again with the provided width and height.
 void Frame::initBuffers()
@@ -95,8 +110,16 @@ void Frame::initBuffers()
   _bufferSize = _width * _height;
   delete[] _bufferChar;
   delete[] _bufferAttributes;
-  _bufferChar = new char[_bufferSize];
+  _bufferChar = new char[_bufferSize + 1];
   _bufferAttributes = new Attribute[_bufferSize];
+  clearBuffers();
+}
+
+void Frame::clearBuffers()
+{
+  memset(_bufferChar, '.', _bufferSize);
+  memset(_bufferAttributes, 0, _bufferSize);
+  _bufferChar[_bufferSize] = '\0';
 }
 
 // Private member function that uses threads to translate
