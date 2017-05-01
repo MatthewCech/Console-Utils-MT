@@ -32,7 +32,7 @@ workspace "Canvases_MT"                         -- Solution Name
 
   filter { "action:gmake" }
     toolset "clang"
-    buildoptions { "-std=c++14" }
+    flags "C++14"
     
   filter {} -- clear filter
   language "C++"
@@ -107,3 +107,7 @@ workspace "Canvases_MT"                         -- Solution Name
 
 filter {} -- clear filter
 
+
+includedirs {
+  source_dir -- absolute file paths
+}
