@@ -7,8 +7,10 @@
 #include <unordered_map>
 
 
+
 class FrameManager
 {
+  friend Frame;
 public:
   // Constructor
   FrameManager();
@@ -24,11 +26,24 @@ public:
   int GetFrameCount() const;
 
 private:
+  // Private Member functions
+  bool updateDimensions();
+  void initOrderingBuffer();
+  void updateOrderingBuffer();
+  
   // Variables
-  void updateSize();
   std::unordered_map<int, Frame *> _frames; //maps IDs to frames.  
-  int *_order;
+  int _bufferSize;
   int _next_id;
   int _width;
   int _height;
+
+  struct LayerInfo
+  {
+    LayerInfo() : ID(0), Layer(0) { }
+    LayerInfo(int i, int l) : ID(i), Layer(l) { } 
+    int ID;
+    int Layer;
+  };
+  LayerInfo *_ordering; // For each index, has the ID of the frame that can draw there.
 };
