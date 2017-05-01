@@ -149,7 +149,7 @@ bool FrameManager::updateDimensions()
 
 void FrameManager::updateOrderingBuffer()
 {
-  memset(_ordering, 0, _bufferSize);
+  memset(_ordering, 0, _bufferSize * sizeof(LayerInfo));
   for(auto &iter : _frames)
   {
     const Frame *f = iter.second;
@@ -162,13 +162,17 @@ void FrameManager::updateOrderingBuffer()
       for(int y = 0; y < f->_height; ++y)
       {
         const int pos = (startY + y) * _width + (startX + x); 
+        if(startX + x > _width - 1)
+          continue;
+        if(startY + y > _height - 1)
+          continue;
         if(pos > _bufferSize - 1 || pos < 0)
           continue;
 
-        //if(_ordering[pos].ID == 0) // If no ID has been assigned, we're in!
+        if(_ordering[pos].ID == 0) // If no ID has been assigned, we're in!
           _ordering[pos] = LayerInfo(id, layer);
-        //else if(_ordering[pos].Layer < layer)
-        //  _ordering[pos] = LayerInfo(id, layer);
+        else if(_ordering[pos].Layer < layer)
+           _ordering[pos] = LayerInfo(id, layer);
       }
   }
 }
@@ -179,5 +183,5 @@ void FrameManager::initOrderingBuffer()
     delete[] _ordering;
 
   _ordering = new LayerInfo[_bufferSize];
-  memset(_ordering, 0, _bufferSize);
+  memset(_ordering, 0, _bufferSize * sizeof(LayerInfo));
 }
