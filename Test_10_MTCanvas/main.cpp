@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
 {
   Canvas canvas(80,10);
 
-  canvas.SetColorMany(0,0, 2000, {-1}, {1,2,0});
+  canvas.SetColorMany(0,0, -1, {-1}, {1,2,0});
 
   std::string blah = "THIS IS A VERY LONaasdfasdfjasdfkjahsdlkfjhasdlkfjhaksjldhflakjshdflkajhsdflkahjsdflkjashdflkajshdflkjashdflkajshdflkashfkjhaG STRING!";
 

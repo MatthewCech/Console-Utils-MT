@@ -123,6 +123,8 @@ void Canvas::SetColorMany(int x, int y, int count, RGBColor foreground, RGBColor
 
 void Canvas::SetColorMany(int index, int count, RGBColor foreground, RGBColor background)
 {
+  // negative means fill to end.
+  if(count == -1) count = _elementCount;
   int remain = _elementCount - index;
   for(int i = 0; i < remain; ++i)
   {
