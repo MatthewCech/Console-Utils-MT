@@ -15,6 +15,11 @@ const char* colorBack256 = "\033[48;005;%03dm%s";
 const char* colorFront256 = "\033[38;005;%03dm%s";
 
 
+const char ColorCodeLookup[][] = {
+  #include
+}
+
+
 inline int posMod(int val, int max)
 {
   val = (val%max);
@@ -105,6 +110,9 @@ int main(int argc, char const *argv[])
   char *colorOne = (char *)"196";
   char *colorTwo = (char *)"051";
   char toPrint = 'X';
+
+
+
 
   SetAttribute(attributeChunk, colorOne, colorTwo, toPrint);
   printf("%s", attributeChunk);

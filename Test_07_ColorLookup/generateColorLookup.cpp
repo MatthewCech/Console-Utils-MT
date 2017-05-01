@@ -1,4 +1,7 @@
 // Generate a header file for super fast lookup of a char number as a string
+// 
+// You should shove the output into a '.inl' file (for 'inline')
+
 
 #include <stdio.h>
 
