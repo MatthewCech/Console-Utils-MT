@@ -41,7 +41,7 @@ int main(int argc, char** argv)
   int index = 0;
 
   // Frame manager initialization
-  FrameManager manager(0, -10);
+  FrameManager manager(0, -3);
   int runIterations = 10000;
   const int numWindows = 3;
   const int countReset = 300;
@@ -63,7 +63,7 @@ int main(int argc, char** argv)
     {
       ++shuffle;
       shuffle = shuffle % 3;
-      int x = manager.ScreenWidth() - 4;//rand() % manager.ScreenWidth();
+      int x = rand() % manager.ScreenWidth();
       int y = rand() % manager.ScreenHeight();
       f[shuffle]->SetLocation(x, y);
       count = countReset;
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
 
     //printf("HJODSFKSDFIKSDNFKLJSLDJKNFJKLSDNFKSDF");
     // Print timing info
-    //printf("\033[38;5;555m\033[%d;%dH[ms: %f, avg over %d samples, remaining: %d]\n", manager.ScreenHeight() + 1, 6, sum / len, static_cast<int>(len), runIterations);
+    printf("\033[38;5;555m\033[%d;%dH[ms: %f, avg over %d samples, remaining: %d]\n", manager.ScreenHeight() + 1, 6, sum / len, static_cast<int>(len), runIterations);
     /*std::cout x
       << std::left  << "ms: " << std::left << std::setw(10) << sum / len
       << std::right << ", avg over " << std::setw(4) << std::left << len

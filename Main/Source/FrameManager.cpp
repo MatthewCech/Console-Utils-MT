@@ -23,7 +23,7 @@ FrameManager::FrameManager(int adjustmentX, int adjustmentY)
  , _canvas()
 {
   updateDimensions();
-  _canvas.UpdateBufferSize(_width, _height);
+  _canvas.UpdateBufferSize(_width + 1, _height);
   initOrderingBuffer();
 }
 
@@ -100,7 +100,7 @@ void FrameManager::Update()
       }
   }
   //_canvas.SetColorMany(0, 0, -1, { -1 }, { 5,0,0});
-  //printf("\033[0;0H%s", _canvas.GetBuffer());
+  printf("\033[0;0H%s", _canvas.GetBuffer());
   _canvas.ResetBuffer();
 }
 
