@@ -14,6 +14,7 @@ void DoMultiThreadTest(int threadCount)
   FrameManager manager(0, -3, threadCount);
   makeTestWindow(manager, 10, 3, 0);
   makeTestWindow(manager, 20, 8, 1);
+  
   int loops = 2000;
   while (loops-->0)
   {

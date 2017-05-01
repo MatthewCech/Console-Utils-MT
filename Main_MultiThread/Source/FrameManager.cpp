@@ -4,7 +4,7 @@
 #include <memory>
 #include <cstring>
 #include <thread>
-
+#include <iterator>
 
 // *Nix specifically
 #include <sys/ioctl.h>
@@ -16,6 +16,9 @@
 // any production code.
 FrameManager::FrameManager(int adjustmentX, int adjustmentY, int threadCount)
  : _frames()
+ , _frameLock()
+ , _frameIterOffset(0)
+ , _frameSem(0)
  , _bufferSize(0)
  , _next_id(1)
  , _width(0)
@@ -42,7 +45,10 @@ FrameManager::FrameManager(int adjustmentX, int adjustmentY, int threadCount)
 FrameManager::~FrameManager()
 {
   for(auto &iter : _frames)
+  {
+    iter.second = nullptr;
     delete iter.second;
+  }
 
   for(auto &iter : _threads)
     iter.join();
@@ -62,6 +68,10 @@ Frame *FrameManager::GetFrame(int id)
 // the frame will draw. Default is 0. 
 Frame *FrameManager::CreateFrame(int x, int y, int width, int height, int layer)
 {
+  // Threading upkeep
+  std::lock_guard<std::mutex> lock(_frameLock);
+  _frameIterOffset = 0;
+
   // Generate ID for frame, verify availability.
   int id = _next_id++;
   if(_frames.find(id) != _frames.end())
@@ -71,10 +81,12 @@ Frame *FrameManager::CreateFrame(int x, int y, int width, int height, int layer)
   Frame *f = new Frame(id, this, x, y, width, height, layer);
   _frames[id] = f;
   updateOrderingBuffer();
+  _frameSem.signal();
   return f;
 }
 
-// Update frame
+
+// Update frame!
 void FrameManager::Thread_UpdateFrame(const Frame *f)
 {
   const int id = f->ID();
@@ -102,6 +114,29 @@ void FrameManager::Thread_UpdateFrame(const Frame *f)
         _canvas.SetColor(xf, yf, f->_bufferAttributes[posf].Foreground ,f->_bufferAttributes[posf].Background);
       }
     }
+
+  _frameSem.signal();
+}
+
+void FrameManager::Thread_WaitYourTurn()
+{
+  _frameSem.wait();
+}
+
+// Gets the next frame to operate on from the map.
+Frame *FrameManager::Thread_GetNextFrame()
+{
+  std::lock_guard<std::mutex> lock(_frameLock);
+  if(_frames.size() == 0)
+    return nullptr;
+
+  auto begin = _frames.begin();
+  std::advance(begin, _frameIterOffset);
+  Frame *f = begin->second;
+  ++_frameIterOffset;
+  if(++begin == _frames.end())
+    _frameIterOffset = 0;
+  return f;
 }
 
 // Draws all frames to the canvas.
@@ -126,6 +161,9 @@ void FrameManager::Update()
 // Deletes then erases ID internally.
 void FrameManager::DeleteFrame(int id)
 {
+  std::lock_guard<std::mutex> lock(_frameLock);
+  _frameIterOffset = 0;
+
   if(_frames.find(id) != _frames.end())
   {
     delete _frames[id];
