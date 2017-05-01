@@ -2,7 +2,7 @@
 #include "Color.hpp"
 #include <string.h>
 #include <string>
-
+#include <chrono>
 // rand
 #include <cstdlib>
 #include <stdlib.h>
@@ -28,7 +28,7 @@ int main(int argc, char** argv)
   FrameManager manager;
   const int size = 3;
   Frame *f[size];
-  const int countReset = 250;
+  const int countReset = 500;
   int count = countReset;
 
 
@@ -39,6 +39,13 @@ int main(int argc, char** argv)
 
   int max = 50000;
   int shuffle = 0;
+
+   //////////////////////////////////////////////////////////////
+  // Timer Start ///////////////////////////////////////////////
+  auto start = std::chrono::high_resolution_clock::now();    //
+  ////////////////////////////////////////////////////////////
+
+
   while(--max)
   {
     if(--count == 0)
@@ -54,5 +61,12 @@ int main(int argc, char** argv)
     manager.Update();
   }
 
+
+   //////////////////////////////////////////////////////////////
+  // Timer End /////////////////////////////////////////////////
+  auto finish = std::chrono::high_resolution_clock::now();   //
+  ////////////////////////////////////////////////////////////
+
+  printf("\033[%d;%dHTime to relocate a window 100 times: %fms\n", 0, 0, std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count() / 1000000.0);
   return 0;
 }
