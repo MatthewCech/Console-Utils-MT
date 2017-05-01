@@ -2,12 +2,12 @@
 #include <string.h>
 #include <memory>
 #include "Frame.hpp"
-
+#include "FrameManager.hpp"
 
 
 // Non-default Ctor, takes an offset and a size + unique ID.
 // ID can NOT be changed post-construction.
-Frame::Frame(int id, int x, int y, int width, int height, int layer) 
+Frame::Frame(int id, FrameManager *m, int x, int y, int width, int height, int layer) 
  : _posX(x)
  , _posY(y)
  , _width(width)
@@ -17,6 +17,7 @@ Frame::Frame(int id, int x, int y, int width, int height, int layer)
  , _bufferSize(width * height)
  , _bufferChar(new char[_bufferSize + 1])
  , _bufferAttributes(new Attribute[_bufferSize])
+ , _manager(m)
 {
   clearBuffers();
 }
@@ -41,7 +42,7 @@ void Frame::Write(char c, int x, int y, ColorRGB fg, ColorRGB bg)
 // behavior may result otherwise.
 void Frame::Write(const char *buf, int size, int x, int y, ColorRGB fg, ColorRGB bg)
 {
-  // No drawing outside the frame.
+  // No starting drawing outside the frame.
   if(!inRange(x, 0, _width - 1))
     return;//    throw "X out of range!";
   
@@ -61,11 +62,33 @@ void Frame::Write(const char *buf, int size, int x, int y, ColorRGB fg, ColorRGB
   }
 }
 
+// Silly function to add a border.
+void Frame::AddBorder(ColorRGB fg, ColorRGB bg)
+{
+  for(int x = 0; x < _width; ++x)
+    for(int y = 0; y < _height; ++y)
+    {
+      if(x == 0 || x == _width - 1)
+        Write('|', x, y, fg, bg);
+
+      if(y == 0 || y == _height - 1)
+      {
+        if(x == 0 || x == _width - 1)
+          Write('+', x, y, fg, bg);
+        else
+          Write('-', x, y, fg, bg);
+      }
+    }
+}
+
 // Repositions the window in the canvas.
 // Size does not change.
 void Frame::SetLocation(int x, int y)
 {
-  throw __func__;
+  _posX = x;
+  _posY = y;
+  _manager->updateOrderingBuffer();
+  //throw __func__;
 }
 
 // Sets the size of the window by adjusting width and height.
@@ -117,7 +140,7 @@ void Frame::initBuffers()
 
 void Frame::clearBuffers()
 {
-  memset(_bufferChar, '.', _bufferSize);
+  memset(_bufferChar, ' ', _bufferSize);
   memset(_bufferAttributes, 0, _bufferSize);
   _bufferChar[_bufferSize] = '\0';
 }
@@ -136,7 +159,7 @@ int Frame::ID() const
   return _id;
 }
 
-bool Frame::inRange(int val, int min, int max)
+inline bool Frame::inRange(int val, int min, int max)
 {
   if(val < min || val > max)
     return false;

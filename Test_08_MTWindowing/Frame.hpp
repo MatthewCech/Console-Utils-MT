@@ -14,8 +14,9 @@ class Frame
   friend FrameManager;
 public:
   // Functions
-  void Write(char c, int x, int y, ColorRGB fg, ColorRGB bg = ColorRGB());
+  void Write(char c, int x, int y, ColorRGB fg = ColorRGB(), ColorRGB bg = ColorRGB());
   void Write(const char *c, int size, int x, int y, ColorRGB fg = ColorRGB(), ColorRGB bg = ColorRGB());
+  void AddBorder(ColorRGB fg = ColorRGB(), ColorRGB bg = ColorRGB());
   void Dump() const;
   int ID() const;
   ~Frame();
@@ -32,7 +33,7 @@ public:
 
 private:
   // Private Ctor
-  Frame(int id, int x, int y, int width, int height, int layer);
+  Frame(int id, FrameManager *m, int x, int y, int width, int height, int layer);
 
   // Private member functions
   void translateToCanvas() const;
@@ -51,4 +52,5 @@ private:
   int _bufferSize;
   char *_bufferChar;
   Attribute *_bufferAttributes; 
+  FrameManager *_manager;
 };
