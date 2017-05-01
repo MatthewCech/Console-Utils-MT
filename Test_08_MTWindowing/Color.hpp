@@ -3,6 +3,13 @@
 // the format required for 256-Color.
 struct ColorRGB
 {
+  ColorRGB() 
+   : R(0)
+   , G(0)
+   , B(0)
+   , IsValid(0) 
+  {  }
+  
   ColorRGB(char r, char g, char b, bool isValid = true)
    : R(r)
    , G(g)
@@ -42,7 +49,7 @@ private:
 
 // Contains two color attributes to be used by the attributes 
 // data structure of the Frame object.
-struct Attributes
+struct Attribute
 {
   ColorRGB Foreground; // Color of the character in the foreground
   ColorRGB Background; // Color of space behind the character.
