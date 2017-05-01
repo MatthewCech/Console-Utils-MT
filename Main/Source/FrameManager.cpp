@@ -16,8 +16,10 @@ FrameManager::FrameManager()
  , _width(0)
  , _height(0)
  , _ordering(nullptr)
+ , _canvas()
 {
   updateDimensions();
+  _canvas.UpdateBufferSize(60, 60);
   initOrderingBuffer();
 }
 
@@ -61,6 +63,7 @@ void FrameManager::Update()
   {
     initOrderingBuffer();
     updateOrderingBuffer();
+    _canvas.UpdateBufferSize(_width, _height);
   }
 
   for(auto &iter : _frames)
@@ -79,26 +82,19 @@ void FrameManager::Update()
         if(pos > _bufferSize - 1)
           continue;
         if(_ordering[pos].ID == id)
-          printf("\033[%d;%dH%c", startY + y, startX + x, f->_bufferChar[y * f->_width + x]);
+        {
+          const int xf = startX + x;
+          const int yf = startY + y;
+          const int posf = y * f->_width + x;
+          _canvas.SetChar(xf, yf, f->_bufferChar[posf]);
+          _canvas.SetColor(xf, yf, f->_bufferAttributes[posf].Foreground ,f->_bufferAttributes[posf].Background);
+        }
       }
   }
+  //_canvas.SetColorMany(0, 0, -1, { -1 }, { 5,0,0});
+  printf("\033[0;0H%s", _canvas.GetBuffer());
+  _canvas.ResetBuffer();
 }
-    //char *arr = new char[f->_width + 1];
-
-    // For all rows,
-    //for(int i = 0; i < f->_height; ++i)
-    //{
-      // Copy in the memory in the buffer and set our terminator
-      // memcpy(arr, &(f->_bufferChar[i * f->_width]), f->_width);
-      // arr[f->_width] = '\0';
-
-      // Print line out
-      //printf("\033[%d;%dH%s", f->_posY + i, f->_posX, arr);
-    //}
-
-    //delete arr;
-  //}
-//}
 
 // Deletes then erases ID internally.
 void FrameManager::DeleteFrame(int id)

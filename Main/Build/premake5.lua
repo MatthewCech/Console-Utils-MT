@@ -58,11 +58,7 @@ workspace "Canvases_MT"                         -- Solution Name
 
     -- Set the rpath on the executable, to allow for relative path for dynamic lib
     filter { "system:macosx", "action:gmake" }
-      linkoptions { "-rpath @executable_path/lib" }
-
-    filter { "system:linux", "action:gmake" }
-      buildoptions { "-stdlib=libc++" }     -- linux needs more info
-      linkoptions  { "-stdlib=libc++" }     
+      linkoptions { "-rpath @executable_path/lib" }   
     
     -- when building any visual studio project
     filter { "system:windows", "action:vs*"}

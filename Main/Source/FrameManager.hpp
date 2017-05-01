@@ -5,7 +5,7 @@
 #pragma once
 #include "Frame.hpp"
 #include <unordered_map>
-
+#include "Canvas.hpp"
 
 
 class FrameManager
@@ -46,4 +46,5 @@ private:
     int Layer;
   };
   LayerInfo *_ordering; // For each index, has the ID of the frame that can draw there.
+  Canvas _canvas;
 };

@@ -11,15 +11,21 @@
 // Testing window creation
 Frame* makeTestWindow(FrameManager &manager, int x, int y, int index)
 {
+  // Colors
+  const RGBColor Something{ 2, 1, 4};
+  const RGBColor Black{ 0,0,0};
+  const RGBColor Gray {1,1,1};
+  const RGBColor Ice{ 4,4,5};
+
   int id = manager.CreateFrame(x, y, 30, 10, index)->ID();
   Frame *frame = manager.GetFrame(id);
   const char *buf = "Hello World!";
   const char *buf2 = "This is a test.";
   std::string buf3 = std::string("Not to bad! L") + std::to_string(index);
-  frame->AddBorder();
-  frame->Write(buf, strlen(buf), 1, 2);
-  frame->Write(buf2, strlen(buf2), 1, 4);
-  frame->Write(buf3.c_str(), strlen(buf3.c_str()), 1, 5);
+  frame->AddBorder(Ice, Gray);
+  frame->Write(buf, strlen(buf), 1, 2, Something);
+  frame->Write(buf2, strlen(buf2), 1, 4, Something);
+  frame->Write(buf3.c_str(), strlen(buf3.c_str()), 1, 5, Something);
   return frame;
 }
 
@@ -31,7 +37,7 @@ int main(int argc, char** argv)
   FrameManager manager;
   const int size = 3;
   Frame *f[size];
-  const int countReset = 500;
+  const int countReset = 300;
   int count = countReset;
 
 
