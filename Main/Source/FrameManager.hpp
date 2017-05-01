@@ -13,7 +13,7 @@ class FrameManager
   friend Frame;
 public:
   // Constructor
-  FrameManager();
+  FrameManager(int adjustmentX = 0, int adjustmentY = 0);
   ~FrameManager();
   Frame *CreateFrame(int x, int y, int width, int height, int layer = 0);
   Frame *GetFrame(int id);
@@ -37,6 +37,8 @@ private:
   int _next_id;
   int _width;
   int _height;
+  int _adjustmentX;
+  int _adjustmentY;
 
   struct LayerInfo
   {

@@ -9,17 +9,21 @@
 #include <unistd.h>
 
 // Default ctor, initializes with no frames.
-FrameManager::FrameManager() 
+// you probably do NOT want to set adjustment values at all in 
+// any production code.
+FrameManager::FrameManager(int adjustmentX, int adjustmentY)
  : _frames()
  , _bufferSize(0)
  , _next_id(1)
  , _width(0)
  , _height(0)
+ , _adjustmentX(adjustmentX)
+ , _adjustmentY(adjustmentY)
  , _ordering(nullptr)
  , _canvas()
 {
   updateDimensions();
-  _canvas.UpdateBufferSize(60, 60);
+  _canvas.UpdateBufferSize(_width, _height);
   initOrderingBuffer();
 }
 
@@ -125,8 +129,8 @@ bool FrameManager::updateDimensions()
 {
   struct winsize screenSize;
   ioctl(STDOUT_FILENO,TIOCGWINSZ,&screenSize);
-  int height = screenSize.ws_row;
-  int width = screenSize.ws_col;
+  int height = screenSize.ws_row + _adjustmentY;
+  int width = screenSize.ws_col + _adjustmentX;
 
   if(height != _height || _width != width)
   {

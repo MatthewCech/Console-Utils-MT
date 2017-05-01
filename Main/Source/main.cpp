@@ -21,7 +21,7 @@ Frame* makeTestWindow(FrameManager &manager, int x, int y, int index)
   Frame *frame = manager.GetFrame(id);
   const char *buf = "Hello World!";
   const char *buf2 = "This is a test.";
-  std::string buf3 = std::string("Not to bad! L") + std::to_string(index);
+  std::string buf3 = std::string("We're on layer ") + std::to_string(index);
   frame->AddBorder(Ice, Gray);
   frame->Write(buf, strlen(buf), 1, 2, Something);
   frame->Write(buf2, strlen(buf2), 1, 4, Something);
@@ -34,29 +34,31 @@ int main(int argc, char** argv)
   UNUSED(argc);
   UNUSED(argv);
 
-  FrameManager manager;
-  const int size = 3;
-  Frame *f[size];
+  // Timing
+  const int size = 5000;
+  double times[size] = { 0 };
+  bool looped = false;
+  int index = 0;
+
+  // Frame manager initialization
+  FrameManager manager(-10, -10);
+  int runIterations = 10000;
+  const int numWindows = 3;
   const int countReset = 300;
+  Frame *f[numWindows];
   int count = countReset;
-
-
-  for(int i = 0; i < size; ++i)
+  for(int i = 0; i < numWindows; ++i)
     f[i] = makeTestWindow(manager, rand() % manager.ScreenWidth(), rand() % manager.ScreenHeight(), i);
-  //printf("here");
-  //return 0;
 
-  int max = 50000;
+
   int shuffle = 0;
-
-   //////////////////////////////////////////////////////////////
-  // Timer Start ///////////////////////////////////////////////
-  auto start = std::chrono::high_resolution_clock::now();    //
-  ////////////////////////////////////////////////////////////
-
-
-  while(--max)
+  while(--runIterations)
   {
+     //////////////////////////////////////////////////////////////
+    // Timer Start ///////////////////////////////////////////////
+    auto start = std::chrono::high_resolution_clock::now();    //
+    ////////////////////////////////////////////////////////////
+
     if(--count == 0)
     {
       ++shuffle;
@@ -68,14 +70,35 @@ int main(int argc, char** argv)
     }
 
     manager.Update();
+
+
+     //////////////////////////////////////////////////////////////
+    // Timer End /////////////////////////////////////////////////
+    auto finish = std::chrono::high_resolution_clock::now();   //
+    ////////////////////////////////////////////////////////////
+
+      // Accumulate values after. Not incluided in the time.
+    times[index++] = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count() / 1000000.0;
+    if(index >= size)
+      looped = true, index = 0;
+
+    double sum = 0;
+    double len = looped ? size : index + 1;
+    for (int i = 0; i < len; ++i)
+      sum += times[i];
+
+    printf("HJODSFKSDFIKSDNFKLJSLDJKNFJKLSDNFKSDF");
+    // Print timing info
+    printf("\033[38;5;555m\033[%d;%dH[ms: %f, avg over %d samples, remaining: %d]\n", 65, 6, sum / len, static_cast<int>(len), runIterations);
+    /*std::cout x
+      << std::left  << "ms: " << std::left << std::setw(10) << sum / len
+      << std::right << ", avg over " << std::setw(4) << std::left << len
+      << std::right << "samples." << '\n';
+      */
   }
 
 
-   //////////////////////////////////////////////////////////////
-  // Timer End /////////////////////////////////////////////////
-  auto finish = std::chrono::high_resolution_clock::now();   //
-  ////////////////////////////////////////////////////////////
 
-  printf("\033[%d;%dHTime to relocate a window 100 times: %fms\n", 0, 0, std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count() / 1000000.0);
+  
   return 0;
 }
