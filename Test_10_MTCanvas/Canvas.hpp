@@ -63,9 +63,14 @@ public:
   void SetChar(int x, int y, char c);
   void SetChar(int index, char c);
 
-  void SetColor(int x, int y, RGBColor foreground, RGBColor background = {0,0,0});
-  void SetColor(int index, RGBColor foreground, RGBColor background = {0,0,0});
+  void SetColor(int x, int y, RGBColor foreground, RGBColor background = {-1,-1,-1});
+  void SetColor(int index, RGBColor foreground, RGBColor background = {-1,-1,-1});
 
   void SetString(int x, int y, const char* str);
   void SetString(int index, const char* str);
+
+  void SetColorMany(int x, int y, int count, RGBColor foreground, RGBColor background = {-1,-1,-1});
+  void SetColorMany(int index, int count, RGBColor foreground, RGBColor background = {-1,-1,-1});
+
+
 };

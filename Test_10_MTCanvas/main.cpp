@@ -10,11 +10,11 @@ int main(int argc, char const *argv[])
   Canvas canvas(80,10);
 
 
-  canvas.SetChar(0, 0, '0');
-  canvas.SetColor(0, 0, {5,0,0});
+  canvas.SetString(0, 0, "DERP");
+  canvas.SetColorMany(0, 0, 3, {-1}, {5,0,0});
 
   canvas.SetChar(3, 3, '3');
-  canvas.SetColor(3, 3, {0,5,5});
+  canvas.SetColor(3, 3, {-1}, {0,5,5});
 
   canvas.SetChar(5, 5, '5');
   canvas.SetColor(5, 5, {0,5,0});

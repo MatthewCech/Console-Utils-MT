@@ -78,17 +78,22 @@ void Canvas::SetColor(int x, int y, RGBColor foreground, RGBColor background)
 {
   SetColor(CoordToIndex(x,y), foreground, background);
 }
+
 void Canvas::SetColor(int index, RGBColor foreground, RGBColor background)
 {
-  const char* color_fore = RGBColor::RGBString(foreground);
-  const char* color_back = RGBColor::RGBString(background);
+  if(foreground.r >= 0)
+  {
+    const char* color_fore = RGBColor::RGBString(foreground);
+    memcpy(_buffer[index].color_front, color_fore, sizeof(char)*3);
+  }
 
-  //printf("FOREGROUND IS: %s\n", color_fore);
-  //printf("BACKGROUND IS: %s\n", color_back);
-
-  memcpy(_buffer[index].color_front, color_fore, sizeof(char)*3);
-  memcpy(_buffer[index].color_back,  color_back, sizeof(char)*3);
+  if(background.r >= 0)
+  {
+    const char* color_back = RGBColor::RGBString(background);
+    memcpy(_buffer[index].color_back,  color_back, sizeof(char)*3);
+  }
 }
+
 
 // Setting a whole string
 void Canvas::SetString(int x, int y, const char* str) 
@@ -108,5 +113,26 @@ void Canvas::SetString(int index, const char* str)
     // return if we hit the end of the string
     if(str[i] == '\0') return;
     _buffer[index+i].print_char = str[i];
+  }
+}
+
+void Canvas::SetColorMany(int x, int y, int count, RGBColor foreground, RGBColor background)
+{
+  SetColorMany(CoordToIndex(x,y), count, foreground, background);
+}
+
+void Canvas::SetColorMany(int index, int count, RGBColor foreground, RGBColor background)
+{
+  int remain = _elementCount - index;
+  for(int i = 0; i < remain; ++i)
+  {
+    if((index+i)%_width == _width-1)
+    {
+      --remain;
+      continue;
+    }
+    // return if we hit the end of the string
+    if(i >= count) return;
+    SetColor(index+i, foreground, background);
   }
 }
