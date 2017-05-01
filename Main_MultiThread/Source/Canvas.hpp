@@ -29,7 +29,7 @@ struct CanvasElement
   //  "\033[48;5;@@@m" <-- Background ANSI Data
   char meta_CSI_2[2]  = {'\033','['};
   char meta_SGR_2[5]  = {'4','8',';','5',';'};
-  char color_back[3]  = {'0','1','6'}; // black
+  char color_back[3]  = {'2','3','4'}; // black
   char delim_2[1]     = {'m'};
 
   //  "@"

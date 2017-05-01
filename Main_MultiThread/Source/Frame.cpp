@@ -5,6 +5,7 @@
 #include "FrameManager.hpp"
 #include "utilities.hpp"
 
+
 // Non-default Ctor, takes an offset and a size + unique ID.
 // ID can NOT be changed post-construction.
 Frame::Frame(int id, FrameManager *m, int x, int y, int width, int height, int layer) 

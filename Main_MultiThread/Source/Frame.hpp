@@ -4,7 +4,6 @@
 #include "RGBColor.hpp"
 
 
-
   /////////////////
  // Frame class //
 /////////////////

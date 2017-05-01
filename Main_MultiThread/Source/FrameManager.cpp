@@ -1,5 +1,7 @@
 #include "FrameManager.hpp"
+#include "GlobalData.hpp"
 #include "Thread_FrameData.hpp"
+
 #include <stdio.h>
 #include <memory>
 #include <cstring>
@@ -144,6 +146,8 @@ void FrameManager::Update()
 {
   if(updateDimensions())
   {
+    std::lock_guard<std::mutex> lock(_frameLock);
+
     initOrderingBuffer();
     updateOrderingBuffer();
     _canvas.UpdateBufferSize(_width, _height);
@@ -188,10 +192,8 @@ int FrameManager::GetFrameCount() const
 // Returns if _width and _height were updated
 bool FrameManager::updateDimensions()
 {
-  struct winsize screenSize;
-  ioctl(STDOUT_FILENO,TIOCGWINSZ,&screenSize);
-  int height = screenSize.ws_row + _adjustmentY;
-  int width = screenSize.ws_col + _adjustmentX;
+  int height = Globals.height + _adjustmentY;
+  int width = Globals.width + _adjustmentX;
 
   if(height != _height || _width != width)
   {
@@ -206,6 +208,8 @@ bool FrameManager::updateDimensions()
 
 void FrameManager::updateOrderingBuffer()
 {
+  _frameIterOffset = 0;
+
   memset(_ordering, 0, _bufferSize * sizeof(LayerInfo));
   for(auto &iter : _frames)
   {

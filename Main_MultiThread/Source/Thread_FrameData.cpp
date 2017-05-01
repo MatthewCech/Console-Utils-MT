@@ -1,12 +1,12 @@
 #include "Thread_FrameData.hpp"
+#include "GlobalData.hpp"
+
 #include <string>
 
 
 void Thread_FrameData_Main(Thread_FrameData_Info info)
 {
-  printf("Hello from thread %d!\n", info.ThreadID);
-  int timeout = 500000;
-  while(timeout-->0)
+  while(Globals.threadsCanRun)
   {
     info.Manager->Thread_WaitYourTurn();
     Frame *f = info.Manager->Thread_GetNextFrame();
