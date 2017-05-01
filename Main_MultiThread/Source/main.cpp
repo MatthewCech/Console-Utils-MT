@@ -8,15 +8,28 @@
 
 #define SIZE_CHECK_FREQUENCY 100
 
+int clamp(int val, int min, int max) { return (val > max ? max : (val < min ? min : val)); }
+
 int main(int argc, char** argv)
 {
+  if(argc == 1)
+  {
+    printf("INSTRUCTIONS: \n");
+    printf("\t 1.\tScale console as desired. Width/Height will be used for Canvas.\n");
+    printf("\t 2.\tEnter the following arguments:\n");
+    printf("\t\t%s  [ThreadCount(1:16)]  <WindowCount(1:99)>  <Debug(t:f)>\n", argv[0]);
+    printf("\n");
+
+    return 0;
+  }
+
   int threadCount = 4;
   if(argc > 1)
-    threadCount = atoi(argv[1]);
+    threadCount = clamp(atoi(argv[1]), 1, 16);
 
   int windowCount = 6;
   if(argc > 2)
-    windowCount = atoi(argv[2]);
+    windowCount = clamp(atoi(argv[2]), 1, 99);
 
   Globals.ThreadDebug = false;
   if(argc > 3)

@@ -45,7 +45,7 @@ void DoMultiThreadTest(int threadCount, int windowCount = 12)
       printf("\033[38;5;25m\033[%d;%dH[ Width: %4d |   Height: %4d |   %s %2d |   Windows: %3d |   DEBUG: %s ]\033[0m   \n",
         manager.ScreenHeight() + 2, 6, manager.ScreenWidth(), manager.ScreenHeight(), ((threadCount == 1) ? "Thread: " : "Threads:"), threadCount, windowCount, Globals.ThreadDebug ? " ENABLED" : "DISABLED");
       
-      printf("\033[38;5;33m\033[%d;%dH[ Loops: %7d |   Time: %6.3f seconds |   Avg: %7.4f ms/loop |   FPS: %6d ]\033[0m   \n", 
+      printf("\033[38;5;33m\033[%d;%dH[ Loops: %7d |   Time: %7.3f seconds |   Avg: %7.4f ms/loop |   FPS: %6d ]\033[0m   \n", 
         manager.ScreenHeight() + 3, 6, Globals.Loops, Globals.Time/1000, avg, fps);
     }
     // Destructor will now join all the threads
